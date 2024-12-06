@@ -1,15 +1,12 @@
 "use client";
-
+import React from "react";
 import { Button } from "@/components/ui/button";
 import InputIcon from "@/components/ui/input-icon";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
 
-export default function Home() {
-  const [isLogin, setIsLogin] = useState(true);
-
+export default function Register() {
   return (
     <div className="h-screen w-screen flex">
       {/* Left side - Form */}
@@ -23,47 +20,38 @@ export default function Home() {
               height={100}
             />
             <div className="space-y-2 text-center">
-              <h1 className="text-3xl font-bold">{isLogin ? "Welcome Back" : "Create Account"}</h1>
+              <h1 className="text-3xl font-bold">Create Account</h1>
               <p className="text-gray-500">
-                {isLogin
-                  ? "Enter your credentials to login"
-                  : "Create an account to get started"}
+                Create an master account to get started
               </p>
             </div>
           </div>
 
           <div className="space-y-4">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <InputIcon icon="ic:baseline-person" placeholder="John Doe" />
-              </div>
-            )}
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <InputIcon icon="ic:baseline-email" placeholder="Username" />
+              <InputIcon icon="ic:baseline-person" placeholder="Username" />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <InputIcon icon="ic:baseline-email" placeholder="example@example.com" />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <InputIcon icon="ic:baseline-lock" placeholder="Password" />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <InputIcon icon="ic:baseline-lock" placeholder="Confirm Password" />
+            </div>
           </div>
 
-          <Button className="w-full" variant="ringHover">
-            {isLogin ? "Sign In" : "Create Account"}
-          </Button>
-
-
+          <Button className="w-full" variant="ringHover">Create Account</Button>
+          
           <p className="text-sm text-center text-gray-600">
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <Link href={isLogin ? "/register" : "/"}>
-              <Button
-                className="font-semibold"
-              variant="link"
-              onClick={() => setIsLogin(!isLogin)}
-            >
-                {isLogin ? "Register" : "Login"}
-              </Button>
+            Already have an account?{" "}
+            <Link href="/" className="text-blue-600 hover:underline font-medium">
+              <Button variant="link">Login</Button>
             </Link>
           </p>
         </div>
