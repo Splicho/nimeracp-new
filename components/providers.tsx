@@ -1,5 +1,6 @@
 "use client";
 
+import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ProgressBarProvider } from "@/components/progress-bar";
 import { useEffect, useState } from "react";
@@ -13,6 +14,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   if (!mounted) {
     return (
+      <SessionProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          {children}
+        </ThemeProvider>
+      </SessionProvider>
+    );
+  }
+
+  return (
+    <SessionProvider>
       <ThemeProvider
         attribute="class"
         defaultTheme="dark"
@@ -20,19 +36,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
         disableTransitionOnChange
       >
         {children}
+        <ProgressBarProvider />
       </ThemeProvider>
-    );
-  }
-
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="dark"
-      enableSystem
-      disableTransitionOnChange
-    >
-      {children}
-      <ProgressBarProvider />
-    </ThemeProvider>
+    </SessionProvider>
   );
 } 

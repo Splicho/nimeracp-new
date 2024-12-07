@@ -4,22 +4,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Icon } from "@iconify/react";
 
-interface InputIconProps {
+interface InputIconProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
-  id?: string;
   icon: string;
-  placeholder?: string;
-  type?: string;
-  className?: string;
 }
 
 export default function InputIcon({
   label,
-  id = "input",
+  id,
   icon,
-  placeholder,
-  type = "text",
   className,
+  ...props
 }: InputIconProps) {
   return (
     <div className="space-y-2">
@@ -28,8 +23,7 @@ export default function InputIcon({
         <Input
           id={id}
           className={`peer pe-9 ${className}`}
-          placeholder={placeholder}
-          type={type}
+          {...props}
         />
         <div className="pointer-events-none absolute inset-y-0 end-0 flex items-center justify-center pe-3 text-muted-foreground/80 peer-disabled:opacity-50">
           <Icon icon={icon} width={16} height={16} aria-hidden="true" />

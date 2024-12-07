@@ -1,14 +1,18 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
+import { auth } from "@/auth"
+import { NextResponse } from "next/server"
+import type { NextRequest } from "next/server"
 
-export function middleware(request: NextRequest) {
-  // Get the token from cookies
-  const token = request.cookies.get('token')?.value
+export async function middleware(request: NextRequest) {
+  const session = await auth()
+  
+  // Allow auth-related paths
+  if (request.nextUrl.pathname.startsWith('/api/auth')) {
+    return NextResponse.next()
+  }
 
-  // Check if the path is /cabinet
+  // Protect cabinet routes
   if (request.nextUrl.pathname.startsWith('/cabinet')) {
-    // If no token exists, redirect to the login page
-    if (!token) {
+    if (!session) {
       return NextResponse.redirect(new URL('/', request.url))
     }
   }
@@ -16,7 +20,6 @@ export function middleware(request: NextRequest) {
   return NextResponse.next()
 }
 
-// Configure which paths the middleware should run on
 export const config = {
-  matcher: '/cabinet/:path*'
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
 }

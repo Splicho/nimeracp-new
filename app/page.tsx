@@ -6,9 +6,48 @@ import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { signIn } from "next-auth/react"
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [isLogin, setIsLogin] = useState(true);
+  const [error, setError] = useState("");
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    const formData = new FormData(event.currentTarget);
+    const username = formData.get("username");
+    const password = formData.get("password");
+
+    console.log('Form Data:', { username, password }); // Debug log
+
+    if (!username || !password) {
+      setError("Username and password are required");
+      return;
+    }
+
+    try {
+      const result = await signIn("credentials", {
+        username: username.toString(),
+        password: password.toString(),
+        redirect: false
+      });
+
+      if (result?.error) {
+        setError("Invalid username or password");
+        return;
+      }
+
+      // If login successful, redirect to cabinet
+      router.push("/cabinet");
+    } catch (err) {
+      setError("An error occurred during login");
+      console.error(err);
+    }
+  }
 
   return (
     <div className="h-screen w-screen flex">
@@ -32,36 +71,45 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {!isLogin && (
-              <div className="space-y-2">
-                <Label htmlFor="name">Name</Label>
-                <InputIcon icon="ic:baseline-person" placeholder="John Doe" />
-              </div>
-            )}
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="username">Username</Label>
-              <InputIcon icon="ic:baseline-email" placeholder="Username" />
+              <InputIcon 
+                icon="ic:baseline-email" 
+                placeholder="Username" 
+                id="username"
+                name="username"
+                type="text"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <InputIcon icon="ic:baseline-lock" placeholder="Password" />
+              <InputIcon 
+                icon="ic:baseline-lock" 
+                placeholder="Password" 
+                id="password" 
+                name="password"
+                type="password"
+              />
             </div>
-          </div>
 
-          <Button className="w-full" variant="ringHover">
-            {isLogin ? "Sign In" : "Create Account"}
-          </Button>
+            {error && (
+              <p className="text-sm text-red-500 text-center">{error}</p>
+            )}
 
+            <Button type="submit" className="w-full" variant="ringHover">
+              {isLogin ? "Sign In" : "Create Account"}
+            </Button>
+          </form>
 
           <p className="text-sm text-center text-gray-600">
             {isLogin ? "Don't have an account? " : "Already have an account? "}
             <Link href={isLogin ? "/register" : "/"}>
               <Button
                 className="font-semibold"
-              variant="link"
-              onClick={() => setIsLogin(!isLogin)}
-            >
+                variant="link"
+                onClick={() => setIsLogin(!isLogin)}
+              >
                 {isLogin ? "Register" : "Login"}
               </Button>
             </Link>
