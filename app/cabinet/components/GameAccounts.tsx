@@ -94,13 +94,12 @@ export default function GameAccounts() {
               </TableCell>
               <TableCell>
                 <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="size-8">
-                      <MoreVertical className="size-4" />
-                    </Button>
+                  <DropdownMenuTrigger className="h-8 w-8 p-0">
+                    <MoreVertical className="size-4" />
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>Change password</DropdownMenuItem>
+                    <DropdownMenuItem>View details</DropdownMenuItem>
+                    <DropdownMenuItem className="text-destructive">Delete account</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </TableCell>
