@@ -15,13 +15,48 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { capitalize } from "lodash"
 
-export default async function Page() {
+// Define breadcrumb mapping
+const BREADCRUMB_TITLES: Record<string, string> = {
+  cabinet: 'Cabinet',
+  characters: 'Characters',
+  account: 'Account Settings',
+  store: 'Store',
+  vote: 'Vote',
+  // Add more mappings as needed
+}
+
+function generateBreadcrumbs(path: string) {
+  const segments = path.split('/').filter(Boolean)
+  return segments.map((segment, index) => {
+    const href = `/${segments.slice(0, index + 1).join('/')}`
+    const title = BREADCRUMB_TITLES[segment] || capitalize(segment)
+    const isLast = index === segments.length - 1
+
+    return {
+      href,
+      title,
+      isLast
+    }
+  })
+}
+
+export default async function Page({
+  params,
+  searchParams,
+}: {
+  params: { slug?: string[] }
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
   const session = await auth()
   
   if (!session) {
     redirect("/auth/signin")
   }
+
+  const path = params.slug ? ['cabinet', ...params.slug].join('/') : 'cabinet'
+  const breadcrumbs = generateBreadcrumbs(path)
 
   return (
     <SidebarProvider>
@@ -33,15 +68,20 @@ export default async function Page() {
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Data Fetching</BreadcrumbPage>
-                </BreadcrumbItem>
+                {breadcrumbs.map((crumb, index) => (
+                  <BreadcrumbItem key={crumb.href}>
+                    {!crumb.isLast ? (
+                      <>
+                        <BreadcrumbLink href={crumb.href}>
+                          {crumb.title}
+                        </BreadcrumbLink>
+                        <BreadcrumbSeparator />
+                      </>
+                    ) : (
+                      <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
+                    )}
+                  </BreadcrumbItem>
+                ))}
               </BreadcrumbList>
             </Breadcrumb>
           </div>

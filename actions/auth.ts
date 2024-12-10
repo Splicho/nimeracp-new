@@ -16,6 +16,14 @@ function verifyTrinityPassword(username: string, password: string, storedHash: s
   return calculatedHash === storedHash
 }
 
+// Add the role mapping at the top
+const SECURITY_LEVELS = {
+  0: 'Player',
+  1: 'Moderator',
+  2: 'Game Master',
+  3: 'Administrator'
+} as const;
+
 export async function getAccount(username: string) {
   const result = await sql(
     'SELECT * FROM account WHERE username = ?',
@@ -30,7 +38,7 @@ export async function verifyAccount(username: string, password: string) {
     console.log('Verifying account:', { username: upperUsername });
     
     const accounts = await sql(`
-      SELECT a.id, a.username, a.salt, a.verifier, COALESCE(aa.SecurityLevel, 0) as role
+      SELECT a.id, a.username, a.email, a.salt, a.verifier, COALESCE(aa.SecurityLevel, 0) as role
       FROM account a 
       LEFT JOIN account_access aa ON a.id = aa.AccountID 
       WHERE a.username = ?
@@ -42,6 +50,11 @@ export async function verifyAccount(username: string, password: string) {
     }
 
     const account = accounts[0];
+    console.log('Raw account data:', { 
+      id: account.id,
+      username: account.username, 
+      role: account.role 
+    });
     
     // Convert binary fields to Buffers
     const saltBuffer = Buffer.from(account.salt);
@@ -68,10 +81,19 @@ export async function verifyAccount(username: string, password: string) {
       return null;
     }
 
+    const securityLevel = parseInt(account.role) || 0;
+    console.log('Parsed security level:', { 
+      raw: account.role,
+      parsed: securityLevel,
+      mapped: SECURITY_LEVELS[securityLevel as keyof typeof SECURITY_LEVELS]
+    });
+    
     return {
       id: account.id,
       username: account.username,
-      role: account.role?.toString() || '0'
+      email: account.email,
+      role: SECURITY_LEVELS[securityLevel as keyof typeof SECURITY_LEVELS],
+      securityLevel: securityLevel
     };
   } catch (error) {
     console.error('Verification error:', error);

@@ -1,44 +1,102 @@
-import NextAuth from "next-auth"
-import CredentialsProvider from "next-auth/providers/credentials"
+import NextAuth, { Session } from "next-auth"
+import Credentials from "next-auth/providers/credentials"
 import { verifyAccount } from "./actions/auth"
+import { DefaultSession } from "next-auth"
+import type { JWT } from "next-auth/jwt"
 
-export const { handlers: { GET, POST }, auth } = NextAuth({
+// Add the role mapping
+export const SECURITY_LEVELS = {
+  0: 'Player',
+  1: 'Moderator',
+  2: 'Game Master',
+  3: 'Administrator'
+} as const
+
+declare module "next-auth" {
+  interface Session {
+    user: {
+      id: string
+      username: string
+      email: string | null | undefined
+      role: string
+      securityLevel: number // Add this to store the raw security level
+    } & DefaultSession["user"]
+  }
+
+  interface User {
+    id?: string
+    username: string
+    role: string
+    securityLevel: number // Add this to store the raw security level
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    id: string
+    username: string
+    role: string
+    securityLevel: number // Add this to store the raw security level
+  }
+}
+
+export const {
+  handlers: { GET, POST },
+  auth,
+} = NextAuth({
   providers: [
-    CredentialsProvider({
-      credentials: {
-        username: { label: "Username", type: "text" },
-        password: { label: "Password", type: "password" }
-      },
+    Credentials({
       async authorize(credentials) {
-        const username = credentials?.username as string;
-        const password = credentials?.password as string;
+        const { username, password } = credentials as {
+          username: string
+          password: string
+        }
+
+        const user = await verifyAccount(username, password)
         
-        if (!username || !password) return null;
-        
-        const user = await verifyAccount(username, password);
-        return user ? {
-          id: user.id.toString(),
-          name: user.username,
-          role: user.role
-        } : null;
-      }
-    })
+        if (user) {
+          console.log('Authorize returning:', user);
+          return {
+            id: String(user.id),
+            username: user.username,
+            role: SECURITY_LEVELS[user.securityLevel as keyof typeof SECURITY_LEVELS],
+            securityLevel: user.securityLevel
+          }
+        }
+        return null
+      },
+    }),
   ],
   callbacks: {
-    jwt({ token, user }) {
-      if (user && typeof user === 'object' && 'role' in user) {
-        token.role = user.role as string;
+    async session({ session, token }: { session: Session; token: JWT }) {
+      const securityLevel = token.securityLevel ?? parseInt(token.role) ?? 0;
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+          username: token.username,
+          email: token.email,
+          role: SECURITY_LEVELS[securityLevel as keyof typeof SECURITY_LEVELS],
+          securityLevel: securityLevel
+        },
       }
-      return token;
     },
-    session({ session, token }) {
-      if (session.user && typeof session.user === 'object' && 'role' in session.user) {
-        session.user.role = token.role as string;
+    async jwt({ token, user }) {
+      if (user) {
+        console.log('JWT callback user data:', { 
+          user,
+          currentToken: token 
+        });
+        token.id = user.id!
+        token.username = user.username
+        token.role = user.role
+        token.securityLevel = user.securityLevel
       }
-      return session;
+      return token
     }
   },
   pages: {
-    signIn: '/'
-  }
+    signIn: "/auth/signin",
+  },
 }) 

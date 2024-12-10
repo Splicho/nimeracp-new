@@ -11,11 +11,15 @@ import {
   Map,
   PieChart,
   Settings2,
-  SquareTerminal,
+  LayoutDashboard,
+  Store,
+  Dices,
+  ChartNoAxesCombined,
+  Vote,
 } from "lucide-react"
 
 import { NavMain } from "@/components/cabinet/nav-main"
-import { NavProjects } from "@/components/cabinet/nav-projects"
+import { NavArcade } from "@/components/cabinet/nav-arcade"
 import { NavUser } from "@/components/cabinet/nav-user"
 import { TeamSwitcher } from "@/components/cabinet/team-switcher"
 import {
@@ -25,19 +29,15 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { useSession } from "next-auth/react"
 
 // This is sample data.
 const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Nimera CP",
       logo: GalleryVerticalEnd,
-      plan: "Enterprise",
+      plan: "Cabinet",
     },
     {
       name: "Acme Corp.",
@@ -52,111 +52,67 @@ const data = {
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Cabinet",
+      url: "/cabinet",
+      icon: LayoutDashboard,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Characters",
           url: "#",
         },
         {
-          title: "Starred",
+          title: "Realms",
           url: "#",
         },
         {
-          title: "Settings",
+          title: "Statistics",
           url: "#",
         },
       ],
     },
     {
-      title: "Models",
+      title: "Shop",
       url: "#",
-      icon: Bot,
+      icon: Store,
       items: [
         {
-          title: "Genesis",
+          title: "Items",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Inventory",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Purchases",
           url: "#",
         },
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
+      title: "Vote",
+      url: "/vote",
+      icon: Vote,
+      items: [],
     },
   ],
-  projects: [
+  arcade: [
     {
-      name: "Design Engineering",
+      name: "Lucky Wheel",
       url: "#",
-      icon: Frame,
+      icon: Dices,
     },
     {
-      name: "Sales & Marketing",
+      name: "Crash",
       url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      icon: ChartNoAxesCombined,
     },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { data: session } = useSession()
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -164,10 +120,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavArcade arcade={data.arcade} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={session?.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
