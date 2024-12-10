@@ -66,6 +66,9 @@ export async function registerAccount(
       )
     `, [upperUsername, salt, verifier, email, email]);
 
+    // After insert, verify what was actually saved
+    const saved = await sql('SELECT username FROM account WHERE username = ?', [upperUsername]);
+
     return { success: true };
   } catch (error) {
     console.error('Registration error:', error);

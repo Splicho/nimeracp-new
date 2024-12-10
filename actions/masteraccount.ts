@@ -16,10 +16,8 @@ export async function registerMasterAccount(
   password: string
 ) {
   try {
-    // Validate input
     const validated = registerSchema.parse({ username, email, password })
     
-    // Check if username or email exists
     const existing = await sql(
       'SELECT username, email FROM nimeracp.master_accounts WHERE username = ? OR email = ?',
       [validated.username, validated.email]
@@ -29,10 +27,8 @@ export async function registerMasterAccount(
       throw new Error('Username or email already exists')
     }
     
-    // Hash password
     const passwordHash = await bcrypt.hash(validated.password, 10)
     
-    // Create account
     const result = await sql(
       'INSERT INTO nimeracp.master_accounts (username, email, password_hash) VALUES (?, ?, ?)',
       [validated.username, validated.email, passwordHash]
@@ -40,7 +36,6 @@ export async function registerMasterAccount(
     
     return { success: true }
   } catch (error) {
-    console.error('Error registering master account:', error)
     throw error
   }
 }
@@ -65,7 +60,6 @@ export async function verifyMasterAccount(
       return null
     }
 
-    // Update last login
     await sql(
       'UPDATE nimeracp.master_accounts SET last_login = CURRENT_TIMESTAMP WHERE id = ?',
       [account[0].id]
@@ -77,7 +71,6 @@ export async function verifyMasterAccount(
       email: account[0].email
     }
   } catch (error) {
-    console.error('Error verifying master account:', error)
     throw error
   }
 }
