@@ -41,7 +41,7 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-background/50 text-sidebar-primary-foreground">
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-background/50 text-sidebar-primary-foreground border border-primary">
                 <Image 
                   src="/logo/nimera_logomark.svg" 
                   alt="Nimeracp Logo" 
