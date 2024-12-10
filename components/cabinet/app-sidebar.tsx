@@ -3,19 +3,14 @@
 import * as React from "react"
 import {
   AudioWaveform,
-  BookOpen,
-  Bot,
   Command,
-  Frame,
   GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
   LayoutDashboard,
   Store,
   Dices,
   ChartNoAxesCombined,
   Vote,
+  LifeBuoy,
 } from "lucide-react"
 
 import { NavMain } from "@/components/cabinet/nav-main"
@@ -94,6 +89,12 @@ const data = {
       title: "Vote",
       url: "/vote",
       icon: Vote,
+      items: [],
+    },
+    {
+      title: "Support",
+      url: "/support",
+      icon: LifeBuoy,
       items: [],
     },
   ],
