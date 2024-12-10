@@ -15,7 +15,7 @@ function AccountBalance() {
           </DropdownMenuTrigger>
           <DropdownMenuContent>
             <DropdownMenuItem>
-              <Link href="/cabinet/account-balance/deposit" className="flex items-center gap-2">
+              <Link href="#" className="flex items-center gap-2">
                 <Plus size={16} />
                 Top up
               </Link>
