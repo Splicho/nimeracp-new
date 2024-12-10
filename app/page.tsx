@@ -22,8 +22,6 @@ export default function Home() {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    console.log('Form Data:', { username, password }); // Debug log
-
     if (!username || !password) {
       setError("Username and password are required");
       return;
@@ -41,7 +39,6 @@ export default function Home() {
         return;
       }
 
-      // If login successful, redirect to cabinet
       router.push("/cabinet");
     } catch (err) {
       setError("An error occurred during login");
@@ -51,7 +48,6 @@ export default function Home() {
 
   return (
     <div className="h-screen w-screen flex">
-      {/* Left side - Form */}
       <div className="w-1/2 flex items-center justify-center bg-[#E9E9E9] dark:bg-[#121212] p-20">
         <div className="w-full max-w-[400px] space-y-6">
           <div className="flex flex-col items-center space-y-6">
@@ -65,8 +61,8 @@ export default function Home() {
               <h1 className="text-3xl font-bold">{isLogin ? "Welcome Back" : "Create Account"}</h1>
               <p className="text-gray-500">
                 {isLogin
-                  ? "Enter your credentials to login"
-                  : "Create an account to get started"}
+                  ? "Enter your master account credentials"
+                  : "Create a master account to get started"}
               </p>
             </div>
           </div>
@@ -117,7 +113,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Right side - Image */}
       <div className="w-1/2 relative">
         <Image
           src="/background/draenei.jpg"

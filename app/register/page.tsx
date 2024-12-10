@@ -5,7 +5,7 @@ import InputIcon from "@/components/ui/input-icon";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
-import { registerAccount } from "@/actions/register";
+import { registerMasterAccount } from "@/actions/masteraccount";
 import { useRouter } from "next/navigation";
 
 export default function Register() {
@@ -38,16 +38,10 @@ export default function Register() {
     }
 
     try {
-      const result = await registerAccount(username, email, password);
-      
-      if (result.error) {
-        setError(result.error);
-      } else {
-        // Registration successful, redirect to login
-        router.push('/?registered=true');
-      }
+      await registerMasterAccount(username, email, password);
+      router.push('/?registered=true');
     } catch (err) {
-      setError("Failed to create account");
+      setError(err instanceof Error ? err.message : "Failed to create account");
     } finally {
       setLoading(false);
     }
