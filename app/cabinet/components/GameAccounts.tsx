@@ -46,7 +46,7 @@ const accounts: GameAccount[] = [
 
 export default function GameAccounts() {
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4 p-6">
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Game accounts <span className="ml-2 inline-flex h-5 items-center rounded-full border bg-muted px-2 text-xs">{accounts.length}</span></h2>
         <div className="flex items-center gap-4">

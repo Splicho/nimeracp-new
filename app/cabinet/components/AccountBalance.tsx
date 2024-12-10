@@ -6,7 +6,7 @@ import React from 'react'
 
 function AccountBalance() {
   return (
-    <div className="p-4 flex flex-col gap-3">
+    <div className="p-6 flex flex-col space-y-4">
       <div className="flex justify-between items-center">
         <div className="text-lg font-semibold">Account Balance</div>
         <DropdownMenu>
